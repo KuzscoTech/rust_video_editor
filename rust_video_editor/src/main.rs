@@ -1,26 +1,30 @@
-use std::fs;
-use std::env;
+use clap::{Subcommand, Parser};
+
+#[derive(Parser)]
+#[command(name = "Rust Video Editor")]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    Load { filename: String },
+    Export {output: String },
+}
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
+    let cli = Cli::parse();
 
-    if args.len() < 2 {
-        println!("Usage: {} <directory>", args[0]);
-        return;
-    }
-
-    let dir = &args[1];
-
-    match fs::read_dir(dir) {
-        Ok(entries) => {
-            for entry in entries {
-                if let Ok(entry) = entry {
-                    println!("{}", entry.file_name().to_string_lossy());
-                }
-            }
+    match cli.command {
+        Commands::Load { filename } => {
+            println!("Loading video file: {}", filename);
+            // Here you would add the logic to load the video file
         }
-        Err(e) => {
-            println!("Error reading directory: {}", e);
+        Commands::Export { output } => {
+            println!("Exporting video to: {}", output);
+            // Here you would add the logic to export the video
         }
     }
 }
+
